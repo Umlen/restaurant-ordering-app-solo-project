@@ -23,7 +23,7 @@ function render() {
                             </p>
                             <p class="bold-text">$ ${item.price}</p>
                         </div>
-                        <i class="fa fa-regular fa-circle-plus"></i>
+                        <i class="fa-regular fa-square-plus"></i>
                     </div>
                 `;
             });
