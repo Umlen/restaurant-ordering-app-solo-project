@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Smythe&display=swap');
+
+$primary-dark: #293241;
+$primary-light: #f8f9fa;
+$additional-dark: #495057;
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    font-family: 'Smythe', cursive;
+    background-color: $primary-dark;
+    color: $primary-dark;
+}
+
+/*Text*/
+
+h1, h2, .menu-section-header, .menu-item-name, p {
+    margin-top: 0;
+    letter-spacing: 2.5px;
+}
+
+h1, h2 {
+    color: $primary-light;
+}
+
+h2 {
+    font-size: 1rem;
+}
+
+.menu-section-header {
+    text-align: center;
+    padding: 1rem 0;
+    border-bottom: 2px solid $primary-dark;
+    border-top: 2px solid $primary-dark;
+}
+
+.menu-item-name, p {
+    margin-bottom: .5rem;
+    letter-spacing: 1.5px;
+}
+
+/*Layout*/
+
+header, main, .shadow-wrapper {
+    max-width: 600px;
+    margin: auto;
+    padding: 1.5rem 2.5rem;
+}
+
+header {
+    background-image: url(images/background.png);
+    background-size: cover;
+}
+
+main {
+    background-color: $primary-light;
+}
+
+.shadow-wrapper {
+    box-shadow: 0 0 15px 1px #000;
+    padding: 0;
+}
+
+.menu-item {
+    width: 100%;
+    display: flex;
+    margin-bottom: 2rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu-item-desc {
+    margin-right: auto;
+}
+
+.menu-item-img {
+    max-width: 150px;
+    border-radius: 10px;
+    margin-right: 1rem;
+}
+
+.additional-text {
+    font-size: smaller;
+    color: $additional-dark;
+}
+
+.bold-text {
+    font-weight: bold;
+}
