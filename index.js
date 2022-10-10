@@ -1,7 +1,14 @@
 import { menuObj } from './data.js';
 
-
 const mainEl = document.getElementById('main-content');
+const paymentForm = document.getElementById('payment-form');
+
+paymentForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    completedMessageShow();
+});
+
+render();
 
 function render() {
     for(let key in menuObj) {
@@ -23,14 +30,113 @@ function render() {
                             </p>
                             <p class="bold-text">$ ${item.price}</p>
                         </div>
-                        <i class="fa-regular fa-square-plus"></i>
+                        <i class="fa-regular fa-square-plus" data-uuid="${item.uuid}" data-category="${key}"></i>
                     </div>
                 `;
             });
-            mainEl.innerHTML += `<h3 class="menu-section-header">${key[0].toUpperCase() + key.slice(1)}</h3>`;
+            mainEl.innerHTML += `<h3 class="menu-category-header">${key[0].toUpperCase() + key.slice(1)}</h3>`;
             mainEl.innerHTML += mainInner;
         }
     }
 }
 
-render();
+document.addEventListener('click', (e) => {
+    if (e.target.dataset.uuid) {
+        addToOrderList(e.target.dataset.uuid, e.target.dataset.category);
+    } else if (e.target.classList.contains('remove-button')) {
+        removeFromOrderList(e.target);
+    } else if (e.target.id === 'complete-order-btn') {
+        paymentFormShow();
+    } else if (e.target.name === "rating") {
+        setTimeout(completedMessageRemove, 1000);
+    }
+});
+
+function addToOrderList(itemUuid, itemCategory) {
+    if (document.getElementById('order').classList.contains('hide')) {
+        document.getElementById('order').classList.remove('hide');
+    }
+    const menuItem = menuObj[itemCategory].filter( item => item.uuid === itemUuid)[0];
+    if (!menuItem.isOrdered) {
+        document.getElementById('order-list').innerHTML += `
+        <div class="order-item" data-name="${menuItem.name}" data-category="${itemCategory}">
+            <p class="bold-text">
+                ${menuItem.name}
+                <span class="remove-button">remove</span>
+            </p>
+            <p id="count">1</p>
+            <p>* $${menuItem.price}</p>
+            <p id="price">$${menuItem.price}</p>
+        </div>
+        `;
+        menuItem.isOrdered = !menuItem.isOrdered;
+    } else {
+        const existedMenuItem = document.querySelector(`[data-name="${menuItem.name}"]`);
+        existedMenuItem.querySelector('#count').textContent = Number(existedMenuItem.querySelector('#count').textContent.replace('x', '')) + 1;
+        existedMenuItem.querySelector('#price').textContent = '$'+(Number(existedMenuItem.querySelector('#count').textContent) * menuItem.price).toFixed(2);
+    }
+    totalPriceCount();
+}
+
+function removeFromOrderList(node) {
+    const elForRemove = node.parentElement.parentElement;
+    menuObj[elForRemove.dataset.category].forEach( item => {
+        if(item.name === elForRemove.dataset.name) {
+            item.isOrdered = false;
+        }
+    });
+    elForRemove.remove();
+    totalPriceCount();
+}
+
+function totalPriceCount() {
+    let totalPrice = Array.from(document.querySelectorAll('#price')).reduce( (sum, item) => sum += Number(item.textContent.replace('$', '')), 0);
+    document.getElementById('total-price').textContent = `$${totalPrice.toFixed(2)}`;
+    if (document.querySelectorAll('.order-item').length === 0) {
+        document.getElementById('order').classList.add('hide');
+    }
+}
+
+function paymentFormShow() {
+    paymentForm.classList.remove('hide');
+    paymentForm.scrollIntoView();
+}
+
+function completedMessageShow() {
+    const paymentFormData = new FormData(paymentForm);
+    mainEl.innerHTML += `
+        <div class="completed-order">
+            <p>Thanks, ${paymentFormData.get('user-name')}! Your order is on its way!</p>
+        </div>
+    `;
+    const completedOrderEl = document.querySelector('.completed-order');
+    completedOrderEl.append((document.getElementById('rating-component')).cloneNode(true));
+    document.getElementById('rating-component').classList.remove('hide');
+    cleanOrderList();
+    cleanPaymentForm();
+    completedOrderEl.scrollIntoView();   
+}
+
+function cleanPaymentForm() {
+    paymentForm.classList.add('hide');
+    document.querySelector('input[name="user-name"]').value = '';
+    document.querySelector('input[name="card-number"]').value = '';
+    document.querySelector('input[name="card-cvv"]').value = '';
+}
+
+function cleanOrderList() {
+    document.getElementById('order').classList.add('hide');
+    const orderItems = document.querySelectorAll('.order-item');
+    orderItems.forEach(item => {
+        menuObj[item.dataset.category].forEach(innerItem => {
+            if (innerItem.name === item.dataset.name) {
+                innerItem.isOrdered = false;
+            }
+        });
+        item.remove();
+    });
+}
+
+function completedMessageRemove() {
+    document.querySelector('.completed-order').remove();
+}

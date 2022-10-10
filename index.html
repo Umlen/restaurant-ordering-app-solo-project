@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Restaurant Ordering App</title>
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
@@ -14,7 +15,40 @@
                 <h2>The best burgers and pizzas in town</h2>
             </header>
             <main id="main-content">
+                <!--Menu items here-->
             </main>
+            <div class="order hide" id="order">
+                <h3 class="menu-category-header">Your order</h3>
+                <div id="order-list">
+                    <!--Order list here-->
+                </div>
+                <div class="price">
+                    <p class="bold-text">Total price:</p>
+                    <p id="total-price">
+                        <!--Total price here-->
+                    </p>
+                </div>
+                <button type="submit" class="buttons" id="complete-order-btn">Complete order</button>
+            </div>
+            <form class="payment-form hide" id="payment-form">
+                <h3 class="menu-category-header">Enter card details</h3>
+                <input type="text" placeholder="Enter your name" name="user-name" required>
+                <input type="number" placeholder="Enter card number" name="card-number" required>
+                <input type="number" placeholder="Enter CVV" name="card-cvv" required>
+                <button type="submit" class="buttons">Pay</button>
+            </form>
+        </div>
+        <div class="rating-component hide" id="rating-component">
+            <input type="radio" id="star-5" name="rating" value="5">
+            <label for="star-5" title="5"></label>	
+            <input type="radio" id="star-4" name="rating" value="4">
+            <label for="star-4" title="4"></label>    
+            <input type="radio" id="star-3" name="rating" value="3">
+            <label for="star-3" title="3"></label>  
+            <input type="radio" id="star-2" name="rating" value="2">
+            <label for="star-2" title="2"></label>    
+            <input type="radio" id="star-1" name="rating" value="1">
+            <label for="star-1" title="1"></label>
         </div>
 	    <script src="index.js" type="module"></script>
     </body>

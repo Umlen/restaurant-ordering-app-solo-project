@@ -3,9 +3,18 @@
 $primary-dark: #293241;
 $primary-light: #f8f9fa;
 $additional-dark: #495057;
+$highlight-color: #3c1642;
+$shadow-color: #000000;
+$rating-color: #1be7ff;
 
 * {
     box-sizing: border-box;
+}
+
+@mixin flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 html, body {
@@ -19,7 +28,7 @@ html, body {
 
 /*Text*/
 
-h1, h2, .menu-section-header, .menu-item-name, p {
+h1, h2, .menu-category-header, .menu-item-name, p {
     margin-top: 0;
     letter-spacing: 2.5px;
 }
@@ -32,7 +41,7 @@ h2 {
     font-size: 1rem;
 }
 
-.menu-section-header {
+.menu-category-header {
     text-align: center;
     padding: 1rem 0;
     border-bottom: 2px solid $primary-dark;
@@ -44,9 +53,33 @@ h2 {
     letter-spacing: 1.5px;
 }
 
+.additional-text, .remove-button {
+    font-size: smaller;
+    color: $additional-dark;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+i {
+    font-size: larger;
+    &:hover{
+        color: $highlight-color;
+        cursor: pointer;
+    }
+    &:active {
+        text-shadow: 1px 1px 1px $shadow-color;
+    }
+}
+
 /*Layout*/
 
-header, main, .shadow-wrapper {
+.hide {
+    display: none !important;
+}
+
+header, main, .shadow-wrapper, .order {
     max-width: 600px;
     margin: auto;
     padding: 1.5rem 2.5rem;
@@ -57,21 +90,23 @@ header {
     background-size: cover;
 }
 
-main {
+main, .order {
     background-color: $primary-light;
 }
 
 .shadow-wrapper {
-    box-shadow: 0 0 15px 1px #000;
+    box-shadow: 0 0 15px 1px $shadow-color;
     padding: 0;
+    position: relative; /*for payment form*/
 }
 
 .menu-item {
     width: 100%;
-    display: flex;
     margin-bottom: 2rem;
-    align-items: center;
-    justify-content: space-between;
+    @include flex-container();
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .menu-item-desc {
@@ -84,11 +119,126 @@ main {
     margin-right: 1rem;
 }
 
-.additional-text {
-    font-size: smaller;
-    color: $additional-dark;
+.order {
+    padding-top: 0;
 }
 
-.bold-text {
-    font-weight: bold;
+.price, .order-item {
+    @include flex-container();
+    padding-top: .5rem;
+    border-top: 1px solid $highlight-color;
+}
+
+.order-item {
+    &:first-child {
+        border-top: none;
+    }
+}
+
+.buttons {
+    width: 100%;
+    padding: .5rem 0;
+    background-color: $highlight-color;
+    color: $primary-light;
+    border: none;
+    &:hover {
+        opacity: .9;
+        cursor: pointer;
+    }
+    &:active {
+        box-shadow: inset 1px 1px 3px 1px $shadow-color;
+    }
+}
+
+.remove-button {
+    padding-left: 1rem;
+    &:hover {
+        color: $highlight-color;
+        cursor: pointer;
+    }
+}
+
+.payment-form {
+    background-color: $primary-light;
+    box-shadow: 0 0 10px 3px $shadow-color;
+    position: absolute;
+    top: 50%;
+    left: 2.5rem;
+    right: 2.5rem;
+    padding: 0 1rem 1rem 1rem;
+    & .menu-category-header {
+        border-top: none;
+    }
+    & input {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+        line-height: 2rem;
+        padding-left: .5rem;
+        
+        /*Remove number input’s spin box*/
+        &[type='number'] {
+            appearance: textfield;
+        }
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            appearance: none;
+        }
+    }
+}
+
+.completed-order {
+    width: 100%;
+    padding: 1rem 0;
+    background-color: $highlight-color;
+    color: $primary-light;
+    @include flex-container();
+    flex-direction: column;
+}
+
+/*Raiting component*/
+
+.rating-component {
+    &:not(:checked) {
+        & > input {
+            display: none;
+            &:checked ~ label {
+                color: $rating-color;
+                text-shadow: 1px 1px $shadow-color;
+            }
+        }
+        & > label {
+            float: right;
+            width: 2.5rem;
+            padding: 0;
+            cursor: pointer;
+            font-size: 2rem;
+            line-height: 2rem;
+            color: $primary-light;
+            text-shadow: 1px 1px $shadow-color;
+            &:before {
+                content: '★';
+            }
+            &:hover, &:hover ~ label {
+                color: $rating-color;
+            }
+        }
+    }
+}
+
+/*Media queries*/
+
+@media (max-width: 420px) {
+    header, main, .shadow-wrapper, .order {
+        max-width: 100%;
+        padding: 1rem .5rem;
+    }
+
+    .shadow-wrapper {
+        padding: 0;
+    }
+
+    .remove-button {
+        padding-left: .2rem;
+    }
 }
