@@ -64,16 +64,16 @@ function addToOrderList(itemUuid, itemCategory) {
                 ${menuItem.name}
                 <span class="remove-button">remove</span>
             </p>
-            <p id="count">1</p>
+            <p data-count="count">1</p>
             <p>* $${menuItem.price}</p>
-            <p id="price">$${menuItem.price}</p>
+            <p data-price="price">$${menuItem.price}</p>
         </div>
         `;
         menuItem.isOrdered = !menuItem.isOrdered;
     } else {
         const existedMenuItem = document.querySelector(`[data-name="${menuItem.name}"]`);
-        existedMenuItem.querySelector('#count').textContent = Number(existedMenuItem.querySelector('#count').textContent.replace('x', '')) + 1;
-        existedMenuItem.querySelector('#price').textContent = '$'+(Number(existedMenuItem.querySelector('#count').textContent) * menuItem.price).toFixed(2);
+        existedMenuItem.querySelector('p[data-count="count"]').textContent = Number(existedMenuItem.querySelector('p[data-count="count"]').textContent.replace('x', '')) + 1;
+        existedMenuItem.querySelector('p[data-price="price"]').textContent = '$'+(Number(existedMenuItem.querySelector('p[data-count="count"]').textContent) * menuItem.price).toFixed(2);
     }
     totalPriceCount();
 }
@@ -90,11 +90,27 @@ function removeFromOrderList(node) {
 }
 
 function totalPriceCount() {
-    let totalPrice = Array.from(document.querySelectorAll('#price')).reduce( (sum, item) => sum += Number(item.textContent.replace('$', '')), 0);
+    let totalPrice = Array.from(document.querySelectorAll('p[data-price="price"]')).reduce( (sum, item) => sum += Number(item.textContent.replace('$', '')), 0);
+    if ( discount() ) {
+        totalPrice -= totalPrice * 0.2;
+        document.getElementById('discount').textContent = '$' + (totalPrice * 0.2).toFixed(2);
+        document.getElementById('discount-container').classList.remove('hide');
+    }
     document.getElementById('total-price').textContent = `$${totalPrice.toFixed(2)}`;
     if (document.querySelectorAll('.order-item').length === 0) {
         document.getElementById('order').classList.add('hide');
     }
+}
+
+function discount() {
+    const orderItems = document.querySelectorAll('.order-item');
+    let categories = [];
+    orderItems.forEach(item => categories.push(item.dataset.category));
+    if (categories.includes('beer') && 
+        (categories.includes('pizza') || categories.includes('hamburger'))) {
+        return true;
+    }
+    return false;
 }
 
 function paymentFormShow() {
@@ -126,6 +142,8 @@ function cleanPaymentForm() {
 
 function cleanOrderList() {
     document.getElementById('order').classList.add('hide');
+    document.getElementById('discount').textContent = '';
+    document.getElementById('discount-container').classList.add('hide');
     const orderItems = document.querySelectorAll('.order-item');
     orderItems.forEach(item => {
         menuObj[item.dataset.category].forEach(innerItem => {
